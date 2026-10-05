@@ -1,0 +1,369 @@
+{
+	"name": "pl_webapi_individual",
+	"properties": {
+		"activities": [
+			{
+				"name": "products",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "GET"
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "['id']"
+								},
+								"sink": {
+									"name": "id",
+									"type": "Int64"
+								}
+							},
+							{
+								"source": {
+									"path": "['title']"
+								},
+								"sink": {
+									"name": "title",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['category']"
+								},
+								"sink": {
+									"name": "category",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['price']"
+								},
+								"sink": {
+									"name": "price",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['discountPercentage']"
+								},
+								"sink": {
+									"name": "discountPercentage",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"path": "['rating']"
+								},
+								"sink": {
+									"name": "products'][0]['rating",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"path": "['stock']"
+								},
+								"sink": {
+									"name": "stock",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['brand']"
+								},
+								"sink": {
+									"name": "brand",
+									"type": "String"
+								}
+							}
+						],
+						"collectionReference": "$['products']"
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "ds_source_products",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ds_sink_webapi_products",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "users",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "products",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "GET"
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "['id']"
+								},
+								"sink": {
+									"name": "id",
+									"type": "Int64"
+								}
+							},
+							{
+								"source": {
+									"path": "['firstName']"
+								},
+								"sink": {
+									"name": "firstName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['lastName']"
+								},
+								"sink": {
+									"name": "lastName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['age']"
+								},
+								"sink": {
+									"name": "age",
+									"type": "Int64"
+								}
+							},
+							{
+								"source": {
+									"path": "['gender']"
+								},
+								"sink": {
+									"name": "gender",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['email']"
+								},
+								"sink": {
+									"name": "email",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['phone']"
+								},
+								"sink": {
+									"name": "phone",
+									"type": "String"
+								}
+							}
+						],
+						"collectionReference": "$['users']"
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "ds_source_users",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ds_sink_webapi_users",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "carts",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "users",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "GET"
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "['id']"
+								},
+								"sink": {
+									"name": "carts'][0]['id",
+									"type": "Int64"
+								}
+							},
+							{
+								"source": {
+									"path": "['total']"
+								},
+								"sink": {
+									"name": "carts'][0]['total",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"path": "['discountedTotal']"
+								},
+								"sink": {
+									"name": "carts'][0]['discountedTotal",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"path": "['userId']"
+								},
+								"sink": {
+									"name": "userId",
+									"type": "Int64"
+								}
+							},
+							{
+								"source": {
+									"path": "['totalQuantity']"
+								},
+								"sink": {
+									"name": "totalQuantity",
+									"type": "Decimal"
+								}
+							}
+						],
+						"collectionReference": "$['carts']"
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "ds_source_carts",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ds_sink_webapi_carts",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-09-25T15:48:25Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
